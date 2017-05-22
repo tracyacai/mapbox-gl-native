@@ -467,7 +467,7 @@ public:
 
     // setup logo bug
     //
-    UIImage *logo = [MGLMapView resourceImageNamed:@"mapbox.png"];
+    UIImage *logo = [MGLMapView resourceImageNamed:@"mapbox"];
     _logoView = [[UIImageView alloc] initWithImage:logo];
     _logoView.accessibilityTraits = UIAccessibilityTraitStaticText;
     _logoView.accessibilityLabel = NSLocalizedStringWithDefaultValue(@"LOGO_A11Y_LABEL", nil, nil, @"Mapbox", @"Accessibility label");
@@ -616,7 +616,7 @@ public:
 
 - (UIImage *)compassImage
 {
-    UIImage *scaleImage = [MGLMapView resourceImageNamed:@"Compass.png"];
+    UIImage *scaleImage = [MGLMapView resourceImageNamed:@"Compass"];
     UIGraphicsBeginImageContextWithOptions(scaleImage.size, NO, [UIScreen mainScreen].scale);
     [scaleImage drawInRect:{ CGPointZero, scaleImage.size }];
 
@@ -5290,18 +5290,17 @@ public:
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName
 {
-    NSString *extension = imageName.pathExtension.length ? imageName.pathExtension : @"png";
-    NSBundle *bundle = [NSBundle mgl_frameworkBundle];
-    NSString *path = [bundle pathForResource:imageName.stringByDeletingPathExtension
-                                      ofType:extension
-                                 inDirectory:bundle.mgl_resourcesDirectory];
-    if ( ! path)
+    UIImage *image = [UIImage imageNamed:imageName
+                                inBundle:[NSBundle mgl_frameworkBundle]
+           compatibleWithTraitCollection:nil];
+
+    if ( ! image)
     {
         [NSException raise:@"Resource not found" format:
          @"The resource named “%@” could not be found in the Mapbox framework bundle.", imageName];
     }
 
-    return [UIImage imageWithContentsOfFile:path];
+    return image;
 }
 
 - (BOOL)isFullyLoaded
